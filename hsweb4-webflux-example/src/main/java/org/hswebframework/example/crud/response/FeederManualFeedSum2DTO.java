@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 public class FeederManualFeedSum2DTO {
 
     private String date;
+    private String minutes;
     private BigDecimal measure;
     private String type;
 

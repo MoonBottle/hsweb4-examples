@@ -29,10 +29,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/test2")
 @Slf4j
-public class FeederManualFeedController implements ReactiveServiceCrudController<FeederManualFeedEntity, String>{
+public class FeederManualFeedController implements ReactiveServiceCrudController<FeederManualFeedEntity, String> {
 
     private final QueryHelper queryHelper;
     private final FeederManualFeedService feederManualFeedService;
+
     @Override
     public ReactiveCrudService<FeederManualFeedEntity, String> getService() {
         return feederManualFeedService;
@@ -42,35 +43,36 @@ public class FeederManualFeedController implements ReactiveServiceCrudController
     @QueryAction
     public Flux<FeederManualFeedSumDTO> testGroupBy1(@RequestBody QueryParamEntity query) {
         return queryHelper.select(
-                "SELECT to_char(m.minute_interval, 'YYYY-MM-DD HH24:MI:SS') AS minute_interval,\n" +
-                "       COALESCE(SUM(f.measure), 0)                         AS sum_water,\n" +
-                "       COALESCE(SUM(f2.measure), 0)                        AS sum_feed\n" +
-                "FROM minutes m\n" +
-                "         LEFT JOIN feeder_manual_feed f ON to_timestamp(f.date / 1000) AT TIME ZONE 'Asia/Shanghai' >= m.minute_interval\n" +
-                "    AND to_timestamp(f.date / 1000) AT TIME ZONE 'Asia/Shanghai' < m.minute_interval + '1 minute'::interval\n" +
-                "    AND f.type = 'water'\n" +
-                "         LEFT JOIN feeder_manual_feed f2\n" +
-                "                   ON to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' >= m.minute_interval\n" +
-                "                       AND to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' < m.minute_interval + '1 minute'::interval\n" +
-                "                       AND f2.type = 'feed'\n" +
-                "GROUP BY minute_interval",
-                FeederManualFeedSumDTO::new)
-            .where(query)
-            .fetch();
+                        "SELECT to_char(m.minute_interval, 'YYYY-MM-DD HH24:MI:SS') AS minute_interval,\n" +
+                                "       COALESCE(SUM(f.measure), 0)                         AS sum_water,\n" +
+                                "       COALESCE(SUM(f2.measure), 0)                        AS sum_feed\n" +
+                                "FROM minutes m\n" +
+                                "         LEFT JOIN feeder_manual_feed f ON to_timestamp(f.date / 1000) AT TIME ZONE 'Asia/Shanghai' >= m.minute_interval\n" +
+                                "    AND to_timestamp(f.date / 1000) AT TIME ZONE 'Asia/Shanghai' < m.minute_interval + '1 minute'::interval\n" +
+                                "    AND f.type = 'water'\n" +
+                                "         LEFT JOIN feeder_manual_feed f2\n" +
+                                "                   ON to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' >= m.minute_interval\n" +
+                                "                       AND to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' < m.minute_interval + '1 minute'::interval\n" +
+                                "                       AND f2.type = 'feed'\n" +
+                                "GROUP BY minute_interval",
+                        FeederManualFeedSumDTO::new)
+                .where(query)
+                .fetch();
     }
 
     @PostMapping({"/group-by/_query2"})
     @QueryAction
     public Flux<FeederManualFeedSum2DTO> testGroupBy2(@RequestBody QueryParamEntity query) {
         return queryHelper.select(
-                "select to_char(to_timestamp(date / 1000) AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD HH24:MI:00') AS date,\n" +
-                    "       SUM(measure)                                                                             AS measure,\n" +
-                    "       type                                                                             AS type\n" +
-                    "from feeder_manual_feed\n" +
-                    "GROUP BY date, type",
+                        "select to_char(to_timestamp(date / 1000) AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD HH24:MI:00') AS date,\n" +
+                                "to_char(to_timestamp(date / 1000) AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD HH24:MI:00') AS minutes,\n" +
+                                "       SUM(measure)                                                                             AS measure,\n" +
+                                "       type                                                                             AS type\n" +
+                                "from feeder_manual_feed\n" +
+                                "GROUP BY date, type",
                         FeederManualFeedSum2DTO::new)
-            .where(query)
-            .fetch();
+                .where(query)
+                .fetch();
     }
 
 }
