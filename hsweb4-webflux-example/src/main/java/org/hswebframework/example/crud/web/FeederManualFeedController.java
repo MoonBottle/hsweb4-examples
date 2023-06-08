@@ -43,7 +43,7 @@ public class FeederManualFeedController implements ReactiveServiceCrudController
     @QueryAction
     public Flux<FeederManualFeedSumDTO> testGroupBy1(@RequestBody QueryParamEntity query) {
         return queryHelper.select(
-                        "SELECT to_char(m.minute_interval, 'YYYY-MM-DD HH24:MI:SS') AS minute_interval,\n" +
+                        "SELECT to_char(m.minute_interval, 'YYYY-MM-DD HH24:MI:SS') AS minute,\n" +
                                 "       COALESCE(SUM(f.measure), 0)                         AS sum_water,\n" +
                                 "       COALESCE(SUM(f2.measure), 0)                        AS sum_feed\n" +
                                 "FROM minutes m\n" +
@@ -54,7 +54,7 @@ public class FeederManualFeedController implements ReactiveServiceCrudController
                                 "                   ON to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' >= m.minute_interval\n" +
                                 "                       AND to_timestamp(f2.date / 1000) AT TIME ZONE 'Asia/Shanghai' < m.minute_interval + '1 minute'::interval\n" +
                                 "                       AND f2.type = 'feed'\n" +
-                                "GROUP BY minute_interval",
+                                "GROUP BY minute",
                         FeederManualFeedSumDTO::new)
                 .where(query)
                 .fetch();

@@ -97,27 +97,32 @@ class TestControllerTest {
         List<Date> timeRange = generateTimeRange(startTimeStr, endTimeStr, intervalMinutes);
 
         // 初始化测试数据
-        timeRange.forEach(time -> {
-            MinutesEntity entity = new MinutesEntity();
-            entity.setMinuteInterval(time);
-            testClient
-                    .post()
-                    .uri("/api/minutes/test")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(entity)
-                    .exchange()
-                    .expectStatus()
-                    .is2xxSuccessful()
-                    .expectBody();
-
-        });
+//        timeRange.forEach(time -> {
+//            MinutesEntity entity = new MinutesEntity();
+//            entity.setMinuteInterval(time);
+//            testClient
+//                    .post()
+//                    .uri("/api/minutes/test")
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .bodyValue(entity)
+//                    .exchange()
+//                    .expectStatus()
+//                    .is2xxSuccessful()
+//                    .expectBody();
+//
+//        });
 
 
         testClient
                 .post()
                 .uri("/api/test2/group-by/_query1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue("{}")
+                .bodyValue("{\"sorts\": [\n" +
+                        "        {\n" +
+                        "            \"name\": \"minute\",\n" +
+                        "            \"order\": \"asc\"\n" +
+                        "        }\n" +
+                        "    ]}")
                 .exchange()
                 .expectBody()
                 .consumeWith(res->{

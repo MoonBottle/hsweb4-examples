@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class FeederManualFeedSumDTO {
 
+    private String minute;
     private String minuteInterval;
     private BigDecimal sumWater;
     private BigDecimal sumFeed;
